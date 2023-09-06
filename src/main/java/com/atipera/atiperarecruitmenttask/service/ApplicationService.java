@@ -5,5 +5,5 @@ import com.atipera.atiperarecruitmenttask.model.Repository;
 import java.util.List;
 
 public interface ApplicationService {
-    public List<Repository> getReposList(String gitHubLogin);
+    public List<Repository> getReposList(String gitHubLogin, String headerAccept);
 }

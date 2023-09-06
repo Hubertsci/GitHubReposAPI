@@ -16,8 +16,9 @@ public class APIController {
     }
 
     @GetMapping(value = "{gitHubLogin}")
-    public List<Repository> getGitHubRepos(@PathVariable("gitHubLogin") String gitHubLogin) {
-        return applicationService.getReposList(gitHubLogin);
+    public List<Repository> getGitHubRepos(@PathVariable("gitHubLogin") String gitHubLogin,
+                                           @RequestHeader("Accept") String headerAccept) {
+        return applicationService.getReposList(gitHubLogin, headerAccept);
     }
 
 }
