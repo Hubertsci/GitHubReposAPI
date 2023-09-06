@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,17 +22,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         String URIString = "https://api.github.com/users/" + gitHubLogin + "/repos";
         WebClient webClient = WebClient.create(URIString);
 
-        return Arrays.stream(webClient.get()
+        return Arrays.stream(Objects.requireNonNull(webClient.get()
                 .header("Accept", headerAccept)
                 .retrieve()
                 .onStatus(httpStatus -> httpStatus.value() == 415,
-                        response -> Mono.just(new NotAcceptableTypeException("Unsupported 'Accept' header: 'application/xml'. Must accept 'application/json'.")))
+                        response -> Mono.just(new NotAcceptableTypeException("Unsupported 'Accept' header. Must accept 'application/json'.")))
                 .onStatus(httpStatus -> httpStatus.value() == 404,
                         response -> Mono.just(new GitHubUserNotFoundException("GitHub User not found")))
                 .onStatus(HttpStatusCode::isError,
                         response -> Mono.just(new InternalServerErrorException("Something went wrong")))
                 .bodyToMono(Repository[].class)
-                .block()).map(Repository::addBranches).collect(Collectors.toList());
+                .block())).map(Repository::addBranches).collect(Collectors.toList());
     }
 
 }
